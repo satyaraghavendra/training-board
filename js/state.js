@@ -176,43 +176,41 @@ async function hardReset(){
   );
   if(!confirmed) return;
 
-  // 1. Clear localStorage
-  try{
-    const key = PROFILE_STATE_KEYS[currentProfile] || STATE_KEY;
-    localStorage.removeItem(key);
-  }catch(e){}
-
-  // 2. Delete all Supabase rows for this profile
-  try{
-    await fetch(
-      `${SUPABASE_URL}/rest/v1/workout_logs?profile=eq.${currentProfile}`,
-      {
-        method: 'DELETE',
-        headers:{
-          'apikey':        SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Prefer':        'return=minimal',
-        }
-      }
-    );
-  }catch(e){
-    console.warn('[HardReset] Could not delete cloud records:', e.message);
-  }
-
-  // 3. Reset all local state
+  // 1. Reset local state immediately (don't wait for network)
   window._doneDays = [];
   currentWeek = 1;
 
-  // 4. Clear all visual done markers
-  document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('day-done'));
+  // 2. Save cleared state to localStorage
+  try{
+    const key = PROFILE_STATE_KEYS[currentProfile] || STATE_KEY;
+    localStorage.setItem(key, JSON.stringify({ week:1, day:'mon', doneDays:[] }));
+  }catch(e){}
+
+  // 3. Clear all visual markers immediately
+  document.querySelectorAll('.day-tab').forEach(t => {
+    t.classList.remove('day-done','active');
+  });
   document.querySelectorAll('.phase-tab').forEach(t => {
-    t.classList.remove('block-done','next-up');
+    t.classList.remove('block-done','next-up','active');
   });
 
-  // 5. Reload from scratch
+  // 4. Reload UI to Week 1 Day 1 immediately
   updateWeekBanner();
   loadDay(getActiveData().trainingDays[0]);
   sndPhaseChange();
+
+  // 5. Delete Supabase rows in background (non-blocking)
+  fetch(
+    `${SUPABASE_URL}/rest/v1/workout_logs?profile=eq.${currentProfile}`,
+    {
+      method: 'DELETE',
+      headers:{
+        'apikey':        SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Prefer':        'return=minimal',
+      }
+    }
+  ).catch(e => console.warn('[HardReset] Cloud delete failed:', e.message));
 }
 
 // resetState() removed — use hardReset() instead
