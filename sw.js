@@ -4,8 +4,8 @@
 //  CRITICAL: Never cache R2 video URLs — browser handles natively
 // ===========================================================
 
-const CACHE_NAME    = 'training-board-v3';
-const CACHE_VERSION = 1;
+const CACHE_NAME    = 'training-board-v3-2';
+const CACHE_VERSION = 2;
 
 // App shell — everything needed to boot offline
 const APP_SHELL = [
