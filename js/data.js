@@ -643,8 +643,8 @@ const DAYS_T = [
         warmup:[
           {name:"Diaphragmatic Breathing",sets:"3 rounds",reps:"5 breaths",load:"BW",rest:"",note:"360° breath — ribs expand all directions · activate pelvic floor on exhale",path:"https://pub-64f509a2e7fd41e8a99344a43271fd4f.r2.dev/videos/diaphragmatic_breathing.mp4"},
           {name:"Pelvic Floor Activation",sets:"2 rounds",reps:"10 reps",load:"BW",rest:"",note:"Heel slides — gentle contraction and release",path:"https://pub-64f509a2e7fd41e8a99344a43271fd4f.r2.dev/videos/pelvic_floor_activation.mp4"},
-          {name:"Cat-Cow",sets:"2 rounds",reps:"8 reps",load:"BW",rest:"",note:"Coordinate breath with movement",path:"https://pub-64f509a2e7fd41e8a99344a43271fd4f.r2.dev/videos/cat_cow.mp4"},
-          {name:"Glute Bridge",sets:"2 rounds",reps:"10 reps",load:"BW",rest:"",note:"Exhale to lift — brace gently, not forcefully",path:"https://pub-64f509a2e7fd41e8a99344a43271fd4f.r2.dev/videos/glute_bridge.mp4"},
+          {name:"Cat-Cow",sets:"2 rounds",reps:"8 reps",load:"BW",rest:"",note:"Coordinate breath with movement — mobilise the spine",path:"https://pub-64f509a2e7fd41e8a99344a43271fd4f.r2.dev/videos/cat_cow.mp4"},
+          {name:"Dead Bug",sets:"1 round",reps:"5 each",load:"BW",rest:"",note:"Activate core before loading — slow and controlled",path:"https://pub-64f509a2e7fd41e8a99344a43271fd4f.r2.dev/videos/deadbugs.mp4"},
         ],
         a:[
           {name:"Glute Bridge",sets:"3 sets",reps:"12",load:"BW",rest:"60s",note:"Hold 2s at top · exhale on lift · pelvic floor engaged",path:"https://pub-64f509a2e7fd41e8a99344a43271fd4f.r2.dev/videos/glute_bridge.mp4"},
@@ -734,7 +734,7 @@ const DAYS_T = [
           {name:"Diaphragmatic Breathing",sets:"3 rounds",reps:"5 breaths",load:"BW",rest:"",note:"Reconnect breath and core",path:"https://pub-64f509a2e7fd41e8a99344a43271fd4f.r2.dev/videos/diaphragmatic_breathing.mp4"},
           {name:"Cat-Cow",sets:"2 rounds",reps:"8 reps",load:"BW",rest:"",note:"",path:"https://pub-64f509a2e7fd41e8a99344a43271fd4f.r2.dev/videos/cat_cow.mp4"},
           {name:"Bird Dog",sets:"2 rounds",reps:"5 each",load:"BW",rest:"",note:"Slow and controlled — no rotation",path:"https://pub-64f509a2e7fd41e8a99344a43271fd4f.r2.dev/videos/bird_dog.mp4"},
-          {name:"Glute Bridge",sets:"2 rounds",reps:"10",load:"BW",rest:"",note:"",path:"https://pub-64f509a2e7fd41e8a99344a43271fd4f.r2.dev/videos/glute_bridge.mp4"},
+          {name:"Hip Circles",sets:"2 rounds",reps:"8 each",load:"BW",rest:"",note:"Standing — warm the hip joint before loading",path:"https://pub-64f509a2e7fd41e8a99344a43271fd4f.r2.dev/videos/hip_circles.mp4"},
         ],
         a:[
           {name:"Glute Bridge",sets:"3 sets",reps:"15",load:"BW",rest:"60s",note:"3s hold at top · march if comfortable",path:"https://pub-64f509a2e7fd41e8a99344a43271fd4f.r2.dev/videos/glute_bridge.mp4"},

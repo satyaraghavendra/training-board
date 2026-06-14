@@ -140,10 +140,7 @@ function sndPhaseChange(){
   sweep(200, 500, 0.12, 0.30, 'sine', 0);
 }
 
-// Legacy shim
-function beep(freq, dur, gain){
-  tone(freq || 880, dur || 0.1, gain || 0.6, 'sine', 0);
-}
+// beep() shim removed — use named snd* functions
 
 // -- CLOCK — display only, no beep ------------------------
 function tickClock(){
@@ -156,14 +153,14 @@ function tickClock(){
 setInterval(tickClock, 250);
 tickClock();
 
-// Unlock audio on ANY interaction (click, keydown, touch)
-function unlockAudio(){
+// Unlock + re-arm audio on any interaction
+function ensureAndResumeAudio(){
   ensureAudio();
   if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
 }
-document.addEventListener('click',   unlockAudio);
-document.addEventListener('keydown', unlockAudio);
-document.addEventListener('touchstart', unlockAudio);
+document.addEventListener('click',      ensureAndResumeAudio);
+document.addEventListener('keydown',    ensureAndResumeAudio);
+document.addEventListener('touchstart', ensureAndResumeAudio);
 
 // Re-arm audio context when screen wakes or tab becomes visible
 document.addEventListener('visibilitychange', () => {

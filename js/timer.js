@@ -145,27 +145,62 @@ function getTimerConfig(dayId, phaseId){
   const base = d.PHASE_TIMER[dayId]?.[phaseId];
   if(!base) return null;
   const wm = getWM(currentWeek);
+  // Resolve deload → base phase for both Satya and Tejaswi
   const p = d.DELOAD_MAP[wm.p] || wm.p;
 
-  // Clone so we don't mutate
+  // Deep clone steps array so we don't mutate shared config
   const cfg = Object.assign({}, base);
+  if(cfg.steps) cfg.steps = cfg.steps.map(s => Object.assign({}, s));
 
-  // Apply phase-specific rest overrides from your PDF
-  if(dayId==='mon' && phaseId==='a'){
-    cfg.rest = p==='P1'?45 : p==='P2'?35 : p==='P3'?25 : 45;
-    cfg.totalSets = p==='P1'?8 : p==='P2'?10 : p==='P3'?9 : 5;
+  // ── Fix 3: holdByPhase deload resolution ──────────────────
+  // Resolve holdByPhase using the base phase (p), not the raw wm.p
+  // so deload weeks (D1/D2/D3 or TD1/TD2/TD3) find the right hold duration
+  if(cfg.steps){
+    cfg.steps.forEach(step => {
+      if(step.holdByPhase && step.holdByPhase[p] !== undefined){
+        step.hold = step.holdByPhase[p];
+      }
+    });
   }
-  if(dayId==='tue' && phaseId==='c'){
-    cfg.emomMin = p==='P3'?10 : p==='P4'?6 : 10;
-    cfg.repsPerMin = p==='P3'?12 : p==='P4'?8 : 10;
+
+  // ── Satya phase-specific overrides ────────────────────────
+  if(currentProfile === 'satya'){
+    if(dayId==='mon' && phaseId==='a'){
+      cfg.rest      = p==='P1'?45 : p==='P2'?35 : p==='P3'?25 : 45;
+      cfg.totalSets = p==='P1'?8  : p==='P2'?10 : p==='P3'?9  : 5;
+    }
+    if(dayId==='tue' && phaseId==='c'){
+      cfg.emomMin    = p==='P3'?10  : p==='P4'?6  : 10;
+      cfg.repsPerMin = p==='P3'?12  : p==='P4'?8  : 10;
+    }
+    if(dayId==='fri' && phaseId==='c'){
+      cfg.totalSets = p==='P1'?6 : p==='P2'?6 : p==='P3'?5 : 4;
+    }
   }
-  if(dayId==='fri' && phaseId==='c'){
-    cfg.totalSets = p==='P1'?6 : p==='P2'?6 : p==='P3'?5 : 4;
+
+  // ── Tejaswi phase-specific overrides (Issue 2 & 4) ────────
+  // Rest decreases and set counts scale up across TP1→TP2→TP3
+  if(currentProfile === 'tejaswi'){
+    if(phaseId === 'a'){
+      cfg.rest      = p==='TP1'?60 : p==='TP2'?60 : p==='TP3'?45 : 60;
+      cfg.totalSets = p==='TP1'?3  : p==='TP2'?3  : p==='TP3'?4  : 3;
+    }
+    if(phaseId === 'b'){
+      cfg.rest      = p==='TP1'?60 : p==='TP2'?60 : p==='TP3'?45 : 60;
+      cfg.totalSets = p==='TP1'?3  : p==='TP2'?3  : p==='TP3'?4  : 3;
+    }
+    if(phaseId === 'c'){
+      cfg.restAfterRound = p==='TP1'?60 : p==='TP2'?60 : p==='TP3'?45 : 60;
+      cfg.totalSets      = p==='TP1'?2  : p==='TP2'?3  : p==='TP3'?3  : 2;
+    }
   }
-  // Deload: reduce sets by 1
-  if(wm.p.startsWith('D')){
+
+  // ── Deload: reduce volume across both profiles ─────────────
+  if(wm.p.startsWith('D') || wm.p.startsWith('TD')){
     cfg.totalSets = Math.max(1, (cfg.totalSets||1) - 1);
+    if(cfg.rest) cfg.rest = Math.round(cfg.rest * 1.2); // 20% more rest on deload
   }
+
   return cfg;
 }
 

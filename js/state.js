@@ -70,7 +70,6 @@ async function requestWakeLock(){
     if('wakeLock' in navigator){
       wakeLock = await navigator.wakeLock.request('screen');
       wakeLock.addEventListener('release', () => {
-        console.log('Wake Lock released');
       });
     }
   }catch(err){
@@ -165,18 +164,58 @@ function loadState(){
   }catch(e){ return {week:1,day:'mon',doneDays:[]}; }
 }
 
-function resetState(){
+// Hard Reset — wipes localStorage AND Supabase cloud history for current profile
+async function hardReset(){
+  const confirmed = confirm(
+    `⚠️ HARD RESET — ${currentProfile.toUpperCase()}\n\n` +
+    `This will permanently delete:\n` +
+    `• All completed days (local + cloud)\n` +
+    `• Current week progress\n` +
+    `• Everything back to Week 1\n\n` +
+    `This cannot be undone. Continue?`
+  );
+  if(!confirmed) return;
+
+  // 1. Clear localStorage
   try{
     const key = PROFILE_STATE_KEYS[currentProfile] || STATE_KEY;
     localStorage.removeItem(key);
   }catch(e){}
+
+  // 2. Delete all Supabase rows for this profile
+  try{
+    await fetch(
+      `${SUPABASE_URL}/rest/v1/workout_logs?profile=eq.${currentProfile}`,
+      {
+        method: 'DELETE',
+        headers:{
+          'apikey':        SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Prefer':        'return=minimal',
+        }
+      }
+    );
+  }catch(e){
+    console.warn('[HardReset] Could not delete cloud records:', e.message);
+  }
+
+  // 3. Reset all local state
   window._doneDays = [];
-  document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('day-done'));
   currentWeek = 1;
+
+  // 4. Clear all visual done markers
+  document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('day-done'));
+  document.querySelectorAll('.phase-tab').forEach(t => {
+    t.classList.remove('block-done','next-up');
+  });
+
+  // 5. Reload from scratch
   updateWeekBanner();
-  loadDay('mon');
+  loadDay(getActiveData().trainingDays[0]);
   sndPhaseChange();
 }
+
+// resetState() removed — use hardReset() instead
 
 // Mark current day as done — disable tab, persist
 function markDayDone(){
@@ -214,17 +253,15 @@ function applyDoneDays(){
 // Persist state whenever week or day changes
 // week picker wired in bootProfile per-profile
 // week picker handled in BOOT section below
-document.getElementById('wp-reset').addEventListener('click', ()=>{
-  if(confirm('Reset to Week 1 and today\'s day?')) resetState();
-});
-document.getElementById('wp-export').addEventListener('click', backupState);
-// Long-press export button (>600ms) → restore from file
-let exportPressTimer = null;
-document.getElementById('wp-export').addEventListener('mousedown', ()=>{
-  exportPressTimer = setTimeout(()=>{ restoreState(); }, 600);
-});
-document.getElementById('wp-export').addEventListener('mouseup',  ()=> clearTimeout(exportPressTimer));
-document.getElementById('wp-export').addEventListener('mouseleave',()=> clearTimeout(exportPressTimer));
+// wp-reset button removed — use hard reset ⚠ instead
+document.getElementById('wp-hardreset').addEventListener('click', ()=>{ hardReset(); });
+const _exportBtn = document.getElementById('wp-export');
+if(_exportBtn){
+  _exportBtn.addEventListener('click', backupState);
+  _exportBtn.addEventListener('mousedown', ()=>{ exportPressTimer = setTimeout(()=>{ restoreState(); }, 600); });
+  _exportBtn.addEventListener('mouseup',   ()=> clearTimeout(exportPressTimer));
+  _exportBtn.addEventListener('mouseleave',()=> clearTimeout(exportPressTimer));
+}
 
 // ===========================================================
 //  BOOT

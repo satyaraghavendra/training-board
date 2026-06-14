@@ -4,10 +4,7 @@
 //  Depends on: data.js, audio.js
 // ===========================================================
 function getWM(w){ const d=getActiveData(); return d.WEEK_META[Math.min(w,d.maxWeek)-1]; }
-function getPhaseCode(w){
-  const wm = getWM(w);
-  return DELOAD_MAP[wm.p] ? wm.p : wm.p; // return as-is; data lookup resolves deload
-}
+
 
 function updateWeekBanner(){
   const d  = getActiveData();
@@ -359,10 +356,7 @@ function buildDayTabs(){
     document.getElementById('day-tabs').appendChild(t);
   });
 }
-function getDefaultDay(){
-  const map={0:'sun',1:'mon',2:'tue',3:'wed',4:'thu',5:'fri',6:'sat'};
-  return map[new Date().getDay()]||'mon';
-}
+// getDefaultDay() removed — see getSmartOpenDay() in boot.js
 
 // ===========================================================
 //  AUDIO ENGINE — loud, distinct, unmistakable sounds

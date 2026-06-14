@@ -87,10 +87,7 @@ function bootProfile(profileName){
     if(betterDay !== currentDay?.id){
       loadDay(betterDay);
     }
-
-    console.log(`[Sync] Merged ${rows.length} cloud records for ${profileName}`);
   }).catch(() => {
-    console.log('[Sync] Offline — using local state only');
   });
 }
 
