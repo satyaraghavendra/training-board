@@ -438,9 +438,8 @@ function showWorkoutDone(){
   // Mark day as done
   markDayDone();
 
-  // Celebratory sound — big chord flourish
-  sndAllSetsDone();
-  setTimeout(()=>{ tone(523,0.6,0.4,'sine',0); tone(659,0.6,0.35,'sine',0.02); tone(784,0.8,0.35,'sine',0.04); tone(1047,0.9,0.30,'sine',0.06); }, 400);
+  // Victory fanfare — 5-note ascending C major
+  sndWorkoutComplete();
 
   // Fill in stats
   const day = currentDay;

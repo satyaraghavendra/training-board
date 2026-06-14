@@ -121,6 +121,7 @@ function selectProfile(name){
     : '13-Week KB Plan · 5-Day Fat Loss · Home Gym';
 
   bootProfile(name);
+  sndProfileSelect();
   requestWakeLock();
 }
 

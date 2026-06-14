@@ -304,6 +304,7 @@ function loadTimer(dayId, phaseId, exercises){
     return;
   }
   window._inCooldown = (phaseId === 'cooldown');
+  if(phaseId === 'cooldown') setTimeout(()=>sndBreathe(), 300);
 
   timerPanel.classList.remove('collapsed');
   timerPanel.classList.add('expanded');
@@ -375,7 +376,7 @@ function tickRest(){
   setCountdown(timerSeconds, timerSeconds<=3?'warning':'running');
   setProgress((timerSeconds/timerTotal)*100,
     timerSeconds<=5?'#FF5C38':'var(--accent)');
-  if(timerSeconds<=3 && timerSeconds>0) sndCountdownWarning();
+  if(timerSeconds<=3 && timerSeconds>0) sndCountdownWarning(timerSeconds);
   if(timerSeconds<=0){
     stopTimer();
     sndRestComplete();
@@ -404,6 +405,7 @@ function initBilateral(hold, gap){
 }
 function tickBilateral(){
   timerSeconds = Math.floor((Date.now() - targetStartTime) / 1000);
+  if(timerSeconds === Math.floor(bilateralHold / 2)) sndComeOn();
   if(bilateralPhase==='right'){
     setCountdown(timerSeconds, 'running');
     setProgress((timerSeconds/bilateralHold)*100,'#38C8FF');
@@ -629,13 +631,14 @@ function tickDensityRest(){
   if(timerSeconds < 0) timerSeconds = 0;
   setCountdown(timerSeconds, timerSeconds<=3?'warning':'running');
   setProgress((timerSeconds/timerTotal)*100, timerSeconds<=5?'#FF5C38':'#FFC83E');
-  if(timerSeconds<=3 && timerSeconds>0) sndCountdownWarning();
+  if(timerSeconds<=3 && timerSeconds>0) sndCountdownWarning(timerSeconds);
   if(timerSeconds<=0){
     stopTimer();
     if(currentSet < timerCfg.totalSets){
       sndTimerStart();
       currentSet++;
       renderSetDots(); updateSetDisplay();
+      if(currentSet === timerCfg.totalSets) sndLastRound();
       circuitStepIdx = 0;
       runCircuitStep();  // auto-starts next countdown
     } else {
@@ -655,7 +658,7 @@ function tickCircuitRest(){
   setCountdown(timerSeconds, timerSeconds<=3?'warning':'running');
   setProgress((timerSeconds/timerTotal)*100,
     timerSeconds<=5?'#FF5C38':'var(--accent)');
-  if(timerSeconds<=3 && timerSeconds>0) sndCountdownWarning();
+  if(timerSeconds<=3 && timerSeconds>0) sndCountdownWarning(timerSeconds);
   if(timerSeconds<=0){
     stopTimer();
     if(currentSet < timerCfg.totalSets){
@@ -737,6 +740,7 @@ function tickCircuitBilateralL(){
 // Hold inside circuit
 function tickCircuitHold(){
   timerSeconds = Math.floor((Date.now() - targetStartTime) / 1000);
+  if(timerSeconds === Math.floor((timerTotal||30) / 2)) sndComeOn();
   const step = timerCfg.steps[circuitStepIdx];
   setCountdown(timerSeconds,'running');
   setProgress((timerSeconds/timerTotal)*100,'var(--accent)');
@@ -757,7 +761,7 @@ function tickCircuitCountdown(){
   setProgress((timerSeconds/timerTotal)*100,
     timerSeconds<=5?'#FF5C38':'#38C8FF');
   cdLabel.textContent = `${step.name} — ${timerSeconds}s left`;
-  if(timerSeconds<=3 && timerSeconds>0) sndCountdownWarning();
+  if(timerSeconds<=3 && timerSeconds>0) sndCountdownWarning(timerSeconds);
   if(timerSeconds<=0){
     stopTimer();
     sndSetComplete();
@@ -806,7 +810,8 @@ function tickEmom(){
   setCountdown(emomSeconds, emomSeconds<=3?'warning':'running');
   setProgress((emomSeconds/60)*100,'var(--accent)');
   cdLabel.textContent = `EMOM · Round ${emomRound} / ${timerCfg.emomMin}`;
-  if(emomSeconds<=3 && emomSeconds>0) sndCountdownWarning();
+  if(emomSeconds === 30) sndHalfway();
+  if(emomSeconds<=3 && emomSeconds>0) sndCountdownWarning(emomSeconds);
   if(emomSeconds<=0){
     sndEmomRound();
     emomRound++;
@@ -861,7 +866,7 @@ function tickStepRest(){
   if(timerSeconds < 0) timerSeconds = 0;
   setCountdown(timerSeconds, timerSeconds<=3?'warning':'running');
   setProgress((timerSeconds/timerTotal)*100, timerSeconds<=5?'#FF5C38':'var(--accent)');
-  if(timerSeconds<=3 && timerSeconds>0) sndCountdownWarning();
+  if(timerSeconds<=3 && timerSeconds>0) sndCountdownWarning(timerSeconds);
   if(timerSeconds<=0){ stopTimer(); sndRestComplete(); advanceCircuitStep(); }
 }
 
@@ -870,7 +875,7 @@ function tickSidesRest(){
   const rem = timerTotal - timerSeconds;
   setCountdown(rem, rem<=3?'warning':'running');
   setProgress((rem/timerTotal)*100, rem<=5?'#FF5C38':'var(--accent)');
-  if(rem<=3 && rem>0) sndCountdownWarning();
+  if(rem<=3 && rem>0) sndCountdownWarning(rem);
   if(rem<=0){
     stopTimer();
     if(window._rsr === 'rest'){
