@@ -148,18 +148,15 @@
   <script src="js/boot.js"></script>
 
   <script>
-    // V3: Register Service Worker for offline-first PWA
-    if('serviceWorker' in navigator){
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(reg => {
-            console.log('[SW] Registered:', reg.scope);
-            // Check for updates on each load
-            reg.update();
-          })
-          .catch(err => console.warn('[SW] Registration failed:', err));
-      });
-    }
+    // Service Worker temporarily disabled during development
+    // Re-enable after all modules verified working
+    // if('serviceWorker' in navigator){
+    //   window.addEventListener('load', () => {
+    //     navigator.serviceWorker.register('/sw.js')
+    //       .then(reg => { reg.update(); })
+    //       .catch(err => console.warn('[SW] Registration failed:', err));
+    //   });
+    // }
   </script>
 </body>
 </html>
