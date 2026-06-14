@@ -54,6 +54,44 @@ function bootProfile(profileName){
   const openDay = getSmartOpenDay(saved.day, window._doneDays, d.trainingDays, d.maxWeek);
   loadDay(openDay);
   applyDoneDays();
+
+  // Background sync: fetch cloud history and merge into local state
+  // Runs silently — UI already loaded, updates apply when data arrives
+  fetchCloudHistory(profileName).then(rows => {
+    if(!rows || !rows.length) return;
+
+    let changed = false;
+    rows.forEach(row => {
+      const key = `wk${row.week}_${row.day_id}`;
+      if(!window._doneDays.includes(key)){
+        window._doneDays.push(key);
+        changed = true;
+      }
+    });
+
+    if(!changed) return;
+
+    // Find the highest week from cloud records
+    const maxCloudWeek = Math.max(...rows.map(r => r.week));
+    if(maxCloudWeek > currentWeek){
+      currentWeek = Math.min(d.maxWeek, maxCloudWeek);
+      updateWeekBanner();
+    }
+
+    // Save merged state locally so next load is instant
+    saveState();
+    applyDoneDays();
+
+    // Re-evaluate smart open day with merged data
+    const betterDay = getSmartOpenDay(saved.day, window._doneDays, d.trainingDays, d.maxWeek);
+    if(betterDay !== currentDay?.id){
+      loadDay(betterDay);
+    }
+
+    console.log(`[Sync] Merged ${rows.length} cloud records for ${profileName}`);
+  }).catch(() => {
+    console.log('[Sync] Offline — using local state only');
+  });
 }
 
 // Show profile selector on load
