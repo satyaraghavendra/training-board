@@ -966,12 +966,4 @@ const PHASE_TIMER_T = {
 const DELOAD_MAP = {D1:"P1", D2:"P2", D3:"P3"};
 
 // Phase tab definitions per day
-// ===========================================================
-//  GLOBAL STATE — declared here so all modules can access
-//  These are set by bootProfile() in boot.js
-// ===========================================================
-let currentWeek    = 1;
-let currentDay     = null;
-let currentProfile = 'satya';
-let phaseFrames    = [];
-let phaseIdx       = 0;
+// Global state declared in index.html before module load
