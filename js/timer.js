@@ -250,10 +250,10 @@ function stopTimer(){
 function startTick(fn){
   stopTimer();
   timerRunning  = true;
-  // Anchor time for drift correction
+  // Anchor time for drift correction on countdowns
   targetEndTime   = Date.now() + (timerSeconds * 1000);
   targetStartTime = Date.now();
-  timerInterval = setInterval(fn, 250); // 250ms tick for smoother display
+  timerInterval = setInterval(fn, 1000); // 1000ms — holds count up 1s at a time
   ensureAudio();
 }
 
@@ -368,7 +368,7 @@ function initBilateral(hold, gap){
   showNudge(false);
 }
 function tickBilateral(){
-  timerSeconds++;
+  timerSeconds = Math.floor((Date.now() - targetStartTime) / 1000);
   if(bilateralPhase==='right'){
     setCountdown(timerSeconds, 'running');
     setProgress((timerSeconds/bilateralHold)*100,'#38C8FF');
@@ -405,7 +405,7 @@ function tickBilateralGap(){
   }
 }
 function tickBilateralLeft(){
-  timerSeconds++;
+  timerSeconds = Math.floor((Date.now() - targetStartTime) / 1000);
   setCountdown(timerSeconds,'running');
   setProgress((timerSeconds/bilateralHold)*100,'#A78BFA');
   cdLabel.textContent = `LEFT SIDE — ${bilateralHold-timerSeconds}s left`;
@@ -652,7 +652,7 @@ function tickCircuitRest(){
 
 // Bilateral inside circuit
 function tickCircuitBilateralR(){
-  timerSeconds++;
+  timerSeconds = Math.floor((Date.now() - targetStartTime) / 1000);
   const step = timerCfg.steps[circuitStepIdx];
   setCountdown(timerSeconds,'running');
   setProgress((timerSeconds/bilateralHold)*100,'#38C8FF');
@@ -687,7 +687,7 @@ function tickCircuitGapL(){
   }
 }
 function tickCircuitBilateralL(){
-  timerSeconds++;
+  timerSeconds = Math.floor((Date.now() - targetStartTime) / 1000);
   const step = timerCfg.steps[circuitStepIdx];
   setCountdown(timerSeconds,'running');
   setProgress((timerSeconds/bilateralHold)*100,'#A78BFA');
@@ -701,7 +701,7 @@ function tickCircuitBilateralL(){
 
 // Hold inside circuit
 function tickCircuitHold(){
-  timerSeconds++;
+  timerSeconds = Math.floor((Date.now() - targetStartTime) / 1000);
   const step = timerCfg.steps[circuitStepIdx];
   setCountdown(timerSeconds,'running');
   setProgress((timerSeconds/timerTotal)*100,'var(--accent)');
@@ -1141,13 +1141,17 @@ btnNextSet.addEventListener('click', ()=>{
 btnMinus15.addEventListener('click', ()=>{
   timerSeconds = Math.max(5, timerSeconds - 15);
   timerTotal   = Math.max(5, timerTotal - 15);
-  setCountdown(timerSeconds,'');
+  // Update anchor so drift correction respects the nudge
+  targetEndTime = Date.now() + (timerSeconds * 1000);
+  setCountdown(timerSeconds,'running');
   setProgress((timerSeconds/timerTotal)*100,'var(--accent)');
 });
 btnPlus15.addEventListener('click', ()=>{
   timerSeconds += 15;
   timerTotal   += 15;
-  setCountdown(timerSeconds,'');
+  // Update anchor so drift correction respects the nudge
+  targetEndTime = Date.now() + (timerSeconds * 1000);
+  setCountdown(timerSeconds,'running');
   setProgress((timerSeconds/timerTotal)*100,'var(--accent)');
 });
 
