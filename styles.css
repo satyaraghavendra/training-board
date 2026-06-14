@@ -77,6 +77,9 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 .day-tab:hover{color:var(--text);border-color:var(--border-hi)}
 .day-tab.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
 .day-tab.active .dt-name{opacity:1}
+/* TV remote focus highlight — brighter border + scale */
+.day-tab.tv-focus{outline:3px solid var(--accent);outline-offset:2px;transform:scale(1.06);z-index:10;}
+.phase-tab.tv-focus{outline:3px solid var(--accent);outline-offset:2px;transform:scale(1.08);z-index:10;}
 .day-tab.rest-day{opacity:.4}
 .day-tab.rest-day.active{opacity:1}
 /* Completed day tab */
@@ -369,6 +372,13 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
   transform:translateY(-4px);
   box-shadow:0 12px 40px rgba(200,255,62,0.1);
 }
+/* TV remote selection highlight */
+.profile-btn.tv-active{
+  background:var(--accent-dim);
+  border-color:var(--accent);
+  transform:translateY(-4px) scale(1.04);
+  box-shadow:0 0 0 3px var(--accent), 0 12px 40px rgba(200,255,62,0.15);
+}
 .profile-btn:active{ transform:scale(.97); }
 .profile-avatar{
   width:72px;height:72px;border-radius:50%;
@@ -445,3 +455,48 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 }
 #wdo-btn:hover{ background:#d4ff52;border-color:#d4ff52; }
 #wdo-btn:active{ transform:scale(.96); }
+
+/* ===========================================================
+   TV CURSOR — visible focus highlight for remote navigation
+   Only active when _isAndroidTV is true (injected by Kotlin)
+   =========================================================== */
+body.tv-mode *:focus{
+  outline: none !important; /* we draw our own */
+}
+body.tv-mode .tv-cursor{
+  outline: 4px solid #C8FF3E !important;
+  outline-offset: 4px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 0 0 6px rgba(200,255,62,0.18), 0 0 24px rgba(200,255,62,0.25) !important;
+  transform: scale(1.06) !important;
+  transition: outline 0.1s, box-shadow 0.1s, transform 0.1s !important;
+  position: relative;
+  z-index: 99 !important;
+}
+/* Profile buttons get pink cursor for Tejaswi */
+body.tv-mode #profile-tejaswi.tv-cursor{
+  outline-color: #F472B6 !important;
+  box-shadow: 0 0 0 6px rgba(244,114,182,0.18), 0 0 24px rgba(244,114,182,0.25) !important;
+}
+/* Timer start button — bigger glow since it's the main action */
+body.tv-mode #btn-start-rest.tv-cursor{
+  outline-width: 5px !important;
+  box-shadow: 0 0 0 8px rgba(200,255,62,0.22), 0 0 32px rgba(200,255,62,0.30) !important;
+}
+
+/* TV MODE — hide top bar controls, week picker, profile button
+   Use phone/browser for week changes and settings              */
+body.tv-mode #week-picker,
+body.tv-mode #btn-switch-profile { display: none !important; }
+
+/* Make day tabs and phase tabs bigger on TV for easier reading */
+body.tv-mode .day-tab  { min-width: 120px !important; padding: 10px 16px !important; }
+body.tv-mode .phase-tab{ min-width: 100px !important; padding: 10px 14px !important; }
+
+/* Bigger timer panel on TV */
+body.tv-mode #timer-panel { font-size: 1.15em !important; }
+body.tv-mode #countdown-display { font-size: clamp(48px, 8vw, 96px) !important; }
+
+/* Bigger nav buttons on TV */
+body.tv-mode .nav-btn { padding: 16px 28px !important; font-size: 16px !important; }
+body.tv-mode .t-btn   { padding: 16px 32px !important; font-size: 16px !important; }
