@@ -1,0 +1,30 @@
+# ===========================================================
+# _headers — Cloudflare Pages HTTP headers
+# Security hardening + aggressive caching for app shell
+# ===========================================================
+
+# Global security headers
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# App shell — long cache, immutable (versioned by SW cache name)
+/js/*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+/styles.css
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML — always revalidate so SW updates propagate
+/index.html
+  Cache-Control: no-cache
+
+# Service Worker — never cache, always fresh
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# Manifest — short cache
+/manifest.json
+  Cache-Control: public, max-age=86400

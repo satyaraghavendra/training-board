@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#080808">
+  <title>Training Board</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<div id="week-banner">
+  <div class="wb-pill"><div class="wb-dot" id="wb-dot"></div><div class="wb-phase" id="wb-phase">Foundation</div></div>
+  <div class="wb-desc" id="wb-desc">Wk 1 of 13</div>
+  <div id="week-picker">
+    <span class="wp-label">Week</span>
+    <button class="wp-btn" id="wp-minus">−</button>
+    <span id="week-num">Wk 1</span>
+    <button class="wp-btn" id="wp-plus">+</button>
+    <button class="wp-btn wp-reset" id="wp-reset" title="Reset to today / Week 1">↺</button>
+    <button class="wp-btn wp-export" id="wp-export" title="Backup progress to JSON">⬇</button>
+  </div>
+</div>
+
+<div id="topbar">
+  <div class="bar-left">
+    <div class="bar-eyebrow">13-Week KB Plan · 5-Day Fat Loss · Home Gym</div>
+    <div class="bar-workout" id="bar-workout">Monday</div>
+  </div>
+  <button id="btn-switch-profile" onclick="switchProfile()" title="Switch profile">
+    <span id="profile-initial">S</span>
+  </button>
+  <div id="clock-wrap">
+    <div id="clock">00:00:00</div>
+    <div id="clock-sub">HH · MM · SS</div>
+  </div>
+</div>
+
+<div id="day-tabs"></div>
+<div id="phase-tabs"></div>
+<div id="frame-viewport"></div>
+
+<div id="timer-panel" class="collapsed">
+
+  <!-- Nav row (always visible) -->
+  <div id="nav-row">
+    <button class="nav-btn" id="btn-prev">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Previous
+    </button>
+    <div id="phase-progress"></div>
+    <button class="nav-btn" id="btn-next">
+      Next
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+
+  <!-- Timer row (expands when phase has a timer) -->
+  <div id="timer-row">
+
+    <!-- Set tracker -->
+    <div id="set-tracker">
+      <div class="st-label">Set</div>
+      <div class="st-value" id="set-display">1 / 4</div>
+      <div id="set-dots"></div>
+    </div>
+
+    <div class="timer-divider"></div>
+
+    <!-- Countdown -->
+    <div id="countdown-wrap">
+      <div class="cd-label" id="cd-label">REST</div>
+      <div id="countdown">0:45</div>
+      <div id="timer-type-badge">countdown</div>
+      <div id="timer-progress-bar"><div id="timer-progress-fill"></div></div>
+    </div>
+
+    <div class="timer-divider"></div>
+
+    <!-- Controls -->
+    <div id="timer-controls">
+      <button class="t-btn nudge" id="btn-minus15">−15s</button>
+      <button class="t-btn primary" id="btn-start-rest">▶ Start Rest</button>
+      <button class="t-btn nudge" id="btn-plus15">+15s</button>
+      <button class="t-btn danger" id="btn-next-set">Next Set →</button>
+    </div>
+
+    <div class="timer-divider"></div>
+
+    <!-- Context -->
+    <div id="timer-context">
+      <div class="tc-name" id="tc-name">KB One-Arm Swing</div>
+      <div class="tc-detail" id="tc-detail">8 sets · 10/set · 45s rest</div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- PROFILE SWITCHER OVERLAY -->
+<div id="profile-overlay">
+  <div id="profile-card">
+    <div id="profile-title">Training Board</div>
+    <div id="profile-sub">Who's training today?</div>
+    <div id="profile-buttons">
+      <button class="profile-btn" id="profile-satya" onclick="selectProfile('satya')">
+        <div class="profile-avatar">S</div>
+        <div class="profile-name">Satya</div>
+        <div class="profile-desc">13-Week KB Plan · 5-Day</div>
+      </button>
+      <button class="profile-btn" id="profile-tejaswi" onclick="selectProfile('tejaswi')">
+        <div class="profile-avatar">T</div>
+        <div class="profile-name">Tejaswi</div>
+        <div class="profile-desc">12-Week Postpartum · 3-Day</div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- WORKOUT DONE OVERLAY -->
+<div id="workout-done-overlay" style="display:none">
+  <div id="workout-done-card">
+    <div id="wdo-icon">✓</div>
+    <div id="wdo-title">Workout Complete</div>
+    <div id="wdo-sub" class="wdo-sub"></div>
+    <div id="wdo-stats"></div>
+    <button id="wdo-btn" onclick="closeWorkoutDone()">Close</button>
+  </div>
+</div>
+
+  <!-- Module load order: dependencies first -->
+  <script src="js/data.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/boot.js"></script>
+
+  <script>
+    // V3: Register Service Worker for offline-first PWA
+    if('serviceWorker' in navigator){
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => {
+            console.log('[SW] Registered:', reg.scope);
+            // Check for updates on each load
+            reg.update();
+          })
+          .catch(err => console.warn('[SW] Registration failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>
