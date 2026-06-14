@@ -130,6 +130,15 @@
   </div>
 </div>
 
+  <!-- Global state — declared before all modules so every script can access -->
+  <script>
+    var currentWeek    = 1;
+    var currentDay     = null;
+    var currentProfile = 'satya';
+    var phaseFrames    = [];
+    var phaseIdx       = 0;
+  </script>
+
   <!-- Module load order: dependencies first -->
   <script src="js/data.js"></script>
   <script src="js/audio.js"></script>
