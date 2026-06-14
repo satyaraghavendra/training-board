@@ -3,62 +3,10 @@
 //  Types: rest | circuit | bilateral | emom | selfpaced
 //  Depends on: data.js, audio.js, ui.js
 // ===========================================================
-const BILATERAL_MAP = {
-  // -- Timed holds (count-up per side) --
-  "Side Plank Hold":           { type:'bilateral', hold:20, gapP1:5, holdByPhase:{P1:20,P2:30,P3:40,P4:20} },
-  "Side Plank":                { type:'bilateral', hold:20, gapP1:5, holdByPhase:{P1:20,P2:30,P3:40,P4:20} },
-  "Suitcase Carry":            { type:'bilateral', hold:20, gap:5  },
-  "Suitcase KB Carry":         { type:'bilateral', hold:20, gap:5  },
-  "Lat Hang":                  { type:'bilateral', hold:20, gap:5  },
-  "90/90 Hip Stretch":         { type:'bilateral', hold:60, gap:5  },
-  "Thread-the-Needle":         { type:'bilateral', hold:60, gap:5  },
-  "Seated Hamstring Stretch":  { type:'bilateral', hold:75, gap:5  },
-  "Pigeon Pose":               { type:'bilateral', hold:60, gap:5  },
-  "Supine Figure-4":           { type:'bilateral', hold:75, gap:5  },
-  "Box Hip Flexor Stretch":    { type:'bilateral', hold:75, gap:5  },
-  "Brettzel":                  { type:'bilateral', hold:60, gap:5  },
-  "Low Lunge / Couch Stretch": { type:'bilateral', hold:75, gap:5  },
-  "Supine Twist":              { type:'bilateral', hold:60, gap:5  },
-  "Standing Quad Stretch":     { type:'bilateral', hold:30, gap:5  },
-  "Wrist Flexor Stretch":      { type:'bilateral', hold:30, gap:5  },
-  "Lat Stretch (on tower)":    { type:'bilateral', hold:45, gap:5  },
-  "Hip Flexor March":          { type:'bilateral', hold:0,  gap:0, note:"10/side — pace yourself" },
-
-  // -- Reps per side (no hold timer, just RIGHT/LEFT prompt) --
-  "KB Floor Press":            { type:'sides', restBetweenSides:30,
-                                  note:"Complete all reps RIGHT → 30s → LEFT → rest" },
-  "KB Single-Arm Press":       { type:'sides', restBetweenSides:20 },
-  "Pallof Press":              { type:'sides', restBetweenSides:15 },
-  "Bench-Supported Row":       { type:'sides', restBetweenSides:15 },
-  "KB Bent-Over Row":          { type:'sides', restBetweenSides:15 },
-  "KB Bicep Curl":             { type:'sides', restBetweenSides:10 },
-  "KB Alternating Clean":      { type:'sides', restBetweenSides:0,  note:"Alternating — no side rest needed" },
-  "Bulgarian Split Squat":     { type:'sides', restBetweenSides:15 },
-  "Single-Leg Deadlift":       { type:'sides', restBetweenSides:15 },
-  "Step-Up (Plyo Box 20\")":   { type:'sides', restBetweenSides:10 },
-  "Single-Leg Glute Bridge":   { type:'sides', restBetweenSides:10 },
-  "KB Lumberjack Squat":       { type:'sides', restBetweenSides:0,  note:"Bilateral — both feet, no side split" },
-  "Suspension Lunge":          { type:'sides', restBetweenSides:5  },
-  "KB One-Arm Swing":          { type:'sides', restBetweenSides:0,  note:"Alternate sets not sides" },
-  "KB Clean & Press":          { type:'sides', restBetweenSides:15 },
-  "Overspeed KB Swing":        { type:'sides', restBetweenSides:0,  note:"Single arm — alternate each round" },
-  "Lat Hang Stretch":          { type:'bilateral', hold:20, gap:5  },
-
-  // -- Self-paced (shows prompt only) --
-  "Turkish Get-Up":            { type:'selfpaced', note:"Breathe between sides — no rush" },
-  "Dead Hang":                 { type:'selfpaced', note:"Both arms — decompress the spine" },
-};
+// BILATERAL_MAP defined in data.js
 
 // Helper: get bilateral config for an exercise at current week
-function getBilateralCfg(exName){
-  const cfg = BILATERAL_MAP[exName];
-  if(!cfg) return null;
-  const wm = getWM(currentWeek);
-  const p  = DELOAD_MAP[wm.p] || wm.p;
-  const result = Object.assign({}, cfg);
-  if(cfg.holdByPhase) result.hold = cfg.holdByPhase[p] || cfg.hold;
-  return result;
-}
+// getBilateralCfg defined in data.js
 
 // ===========================================================
 //  TIMER CONFIG PER PHASE BLOCK
