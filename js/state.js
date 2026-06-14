@@ -20,6 +20,35 @@
 const SUPABASE_URL      = 'https://rwelcdnezqdjzwiwlloe.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3ZWxjZG5lenFkanp3aXdsbG9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0MTEzODYsImV4cCI6MjA5Njk4NzM4Nn0.Cji8kDZ-wHkE13lRfYf4KOzSXJASdrqLbvUle7NUixA';
 
+// Sync manual week change to cloud
+// Stored as a special row: day_id = '__week_set__'
+async function syncWeekToCloud(week){
+  try{
+    // Delete previous week_set rows for this profile first
+    await fetch(
+      `${SUPABASE_URL}/rest/v1/workout_logs?profile=eq.${currentProfile}&day_id=eq.__week_set__`,
+      { method:'DELETE', headers:{
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Prefer': 'return=minimal',
+      }}
+    );
+    // Insert new week_set row
+    await fetch(`${SUPABASE_URL}/rest/v1/workout_logs`, {
+      method: 'POST',
+      headers:{
+        'apikey':        SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type':  'application/json',
+        'Prefer':        'return=minimal',
+      },
+      body: JSON.stringify({ profile: currentProfile, week, day_id: '__week_set__' }),
+    });
+  }catch(err){
+    console.warn('Week sync failed:', err.message);
+  }
+}
+
 // Silent fire-and-forget sync — localStorage is always source of truth
 // Network failure silently logged, never interrupts the workout
 async function syncToCloud(week, dayId, profile){

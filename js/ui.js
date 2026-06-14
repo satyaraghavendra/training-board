@@ -454,6 +454,11 @@ function showWorkoutDone(){
 
   const overlay = document.getElementById('workout-done-overlay');
   overlay.style.display = 'flex';
+  // Auto-dismiss after 8 seconds if no input
+  clearTimeout(window._wdoTimer);
+  window._wdoTimer = setTimeout(()=>{
+    if(overlay.style.display !== 'none') closeWorkoutDone();
+  }, 15000); // 15s — enough time to read stats on phone, auto-clears on TV
 }
 
 function closeWorkoutDone(){
