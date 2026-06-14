@@ -90,6 +90,9 @@ const PROFILE_STATE_KEYS = {
 
 function switchProfile(){
   stopTimer();
+  // Reset accent to default lime so profile selector always looks correct
+  document.documentElement.style.setProperty('--accent','#C8FF3E');
+  document.documentElement.style.setProperty('--accent-dim','rgba(200,255,62,0.13)');
   document.getElementById('profile-overlay').style.display = 'flex';
 }
 
@@ -100,10 +103,10 @@ function selectProfile(name){
   // Update profile button initial + colour
   const initial = name === 'tejaswi' ? 'T' : 'S';
   document.getElementById('profile-initial').textContent = initial;
-  document.getElementById('btn-switch-profile').style.background =
-    name === 'tejaswi' ? '#F472B6' : 'var(--accent)';
-  document.getElementById('btn-switch-profile').style.borderColor =
-    name === 'tejaswi' ? '#F472B6' : 'var(--accent)';
+  const btnColor = name === 'tejaswi' ? '#F472B6' : '#C8FF3E';
+  document.getElementById('btn-switch-profile').style.background  = btnColor;
+  document.getElementById('btn-switch-profile').style.borderColor = btnColor;
+  document.getElementById('btn-switch-profile').style.color       = '#080808';
 
   // Update accent colour
   if(name === 'tejaswi'){

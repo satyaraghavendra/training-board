@@ -299,13 +299,13 @@ function showPhase(idx){
 function stopAllVideos(){ document.querySelectorAll('video').forEach(v=>v.pause()); }
 
 function playFrameVids(f){
-  // Pause all other videos first
   stopAllVideos();
-  // Hydrate src from data-src and play
   f.querySelectorAll('.vcell').forEach(cell => {
     cell.querySelectorAll('video').forEach(v => {
-      if(!v.src && v.dataset.src){
-        v.src = v.dataset.src;
+      // Always hydrate from data-src (covers CDN absolute URLs too)
+      const src = v.dataset.src;
+      if(src && v.src !== src){
+        v.src = src;
         v.load();
       }
       v.currentTime = 0;
