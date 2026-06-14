@@ -93,3 +93,8 @@ function bootProfile(profileName){
 
 // Show profile selector on load
 document.getElementById('profile-overlay').style.display = 'flex';
+// TV only: pre-highlight first profile button for remote navigation
+// window._isAndroidTV is set by the Kotlin WebView via evaluateJavascript
+if(window._isAndroidTV){
+  document.querySelector('.profile-btn')?.classList.add('tv-active');
+}
