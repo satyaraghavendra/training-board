@@ -82,7 +82,7 @@ async function requestWakeLock(){
 document.addEventListener('click', requestWakeLock, { once: true });
 //  PROFILE SYSTEM
 // ===========================================================
-let currentProfile = 'satya'; // 'satya' | 'tejaswi'
+// currentProfile declared in data.js
 const PROFILE_STATE_KEYS = {
   satya:   'trainingboard_state_satya',
   tejaswi: 'trainingboard_state_tejaswi',
