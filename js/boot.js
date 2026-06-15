@@ -134,9 +134,13 @@ function initTVMode(){
   function getFocusables(){
     return SELECTORS.flatMap(sel =>
       Array.from(document.querySelectorAll(sel))
-           .filter(el => el.offsetParent !== null &&  // visible
-                         !el.disabled &&
-                         !el.classList.contains('day-done'))
+           .filter(el => {
+             if(el.disabled) return false;
+             if(el.classList.contains('day-done')) return false;
+             // offsetParent is null for position:fixed — use getBoundingClientRect instead
+             const r = el.getBoundingClientRect();
+             return r.width > 0 && r.height > 0;
+           })
     );
   }
 
@@ -150,6 +154,12 @@ function initTVMode(){
   }
 
   function initCursor(){
+    // If profile overlay is visible, always start on first profile button
+    const overlay = document.getElementById('profile-overlay');
+    if(overlay && overlay.style.display !== 'none'){
+      const first = document.querySelector('.profile-btn');
+      if(first) { setCursor(first); return; }
+    }
     const els = getFocusables();
     if(els.length) setCursor(els[0]);
   }
