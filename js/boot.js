@@ -101,15 +101,17 @@ function bootProfile(profileName){
 document.getElementById('profile-overlay').style.display = 'flex';
 // TV only: pre-highlight first profile button for remote navigation
 // window._isAndroidTV is set by the Kotlin WebView via evaluateJavascript
-if(window._isAndroidTV){
-  document.querySelector('.profile-btn')?.classList.add('tv-active');
-}
+// tv-active added by initTVMode() not here
 // ===========================================================
-//  TV SPATIAL CURSOR — only active in Android TV WebView
-//  Injected after _isAndroidTV flag is set by Kotlin
+//  TV SPATIAL CURSOR
+//  initTVMode() called by Kotlin after page finishes loading
+//  Safe to define always — only activates when Kotlin calls it
 // ===========================================================
-if(window._isAndroidTV){
+function initTVMode(){
+  if(window._tvModeActive) return; // prevent double-init
+  window._tvModeActive = true;
   document.body.classList.add('tv-mode');
+  document.querySelector('.profile-btn')?.classList.add('tv-active');
 
   // All elements the cursor can land on
   // TV FOCUSABLE ELEMENTS — only what matters during a workout
@@ -192,6 +194,7 @@ if(window._isAndroidTV){
   // key = ArrowLeft | ArrowRight | ArrowUp | ArrowDown | Enter | init
   window.tvKey = function(key){
     if(key === 'init'){ initCursor(); return; }
+    if(key === 'reinit'){ initCursor(); return; }
     // Profile overlay open
     const overlay = document.getElementById('profile-overlay');
     if(overlay && overlay.style.display !== 'none'){
@@ -279,4 +282,4 @@ if(window._isAndroidTV){
   setInterval(()=>{
     document.dispatchEvent(new Event('touchstart', {bubbles:true}));
   }, 30000);
-}
+} // end initTVMode
