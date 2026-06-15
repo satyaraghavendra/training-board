@@ -473,10 +473,20 @@ body.tv-mode .tv-cursor{
   position: relative;
   z-index: 99 !important;
 }
-/* Profile buttons get pink cursor for Tejaswi */
-body.tv-mode #profile-tejaswi.tv-cursor{
+/* Profile cards — also apply cursor even before body.tv-mode fully set */
+.profile-btn.tv-cursor{
+  outline: 4px solid #C8FF3E !important;
+  outline-offset: 4px !important;
+  border-radius: 16px !important;
+  box-shadow: 0 0 0 6px rgba(200,255,62,0.25), 0 0 32px rgba(200,255,62,0.35) !important;
+  transform: scale(1.06) translateY(-4px) !important;
+  z-index: 99 !important;
+}
+/* Tejaswi profile card — pink cursor */
+body.tv-mode #profile-tejaswi.tv-cursor,
+#profile-tejaswi.tv-cursor{
   outline-color: #F472B6 !important;
-  box-shadow: 0 0 0 6px rgba(244,114,182,0.18), 0 0 24px rgba(244,114,182,0.25) !important;
+  box-shadow: 0 0 0 6px rgba(244,114,182,0.25), 0 0 32px rgba(244,114,182,0.35) !important;
 }
 /* Timer start button — bigger glow since it's the main action */
 body.tv-mode #btn-start-rest.tv-cursor{
